@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace KooliProjekt.Data
 {
@@ -16,6 +17,7 @@ namespace KooliProjekt.Data
         public decimal Price { get; set; }
         [Required]
         public Category Category { get; set; }
-
+        [DisplayName("Category")]
+        public int CategoryId { get; set; }
     }
 }

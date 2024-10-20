@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace KooliProjekt.Data
 {
@@ -7,6 +8,8 @@ namespace KooliProjekt.Data
         public int Id { get; set; }
         [Required]
         public Product Product { get; set; }
+        [DisplayName("Product")]
+        public int ProductId { get; set; }
         [Required]
         public decimal PriceAtOrderTime { get; set; }
         [Required]

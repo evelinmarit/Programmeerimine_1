@@ -8,7 +8,6 @@ namespace KooliProjekt.Data
         
         [Required]
         public DateTime OrderDate { get; set; }
-        [Required]
         [StringLength(50)]
         public string Status { get; set; }
         [Required]
@@ -28,17 +27,17 @@ namespace KooliProjekt.Data
             }
         }
 
-        public void MarkAsPaid()
-        {
-            Status = "Paid";
-        }
+        //public void MarkAsPaid()
+        //{
+        //    Status = "Paid";
+        //}
 
-        public void MarkAsDelivered()
-        {
-            if (Status == "Paid")
-            {
-                Status = "Delivered";
-            }
-        }
+        //public void MarkAsDelivered()
+        //{
+        //    if (Status == "Paid")
+        //    {
+        //        Status = "Delivered";
+        //    }
+        //}
     }
 }
