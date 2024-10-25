@@ -16,7 +16,7 @@ namespace KooliProjekt.Data
         [Required]
         public string Email { get; set; }
         public int? PhoneNumber { get; set; }
-        public List<Order> Orders { get; set; }
+        public List<Order>? Orders { get; set; }
         public DateTime RegisteredDate { get; set; }
         public int LoyaltyPoints { get; set; }
         public int Discount { get; set; }

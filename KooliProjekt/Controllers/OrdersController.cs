@@ -58,6 +58,7 @@ namespace KooliProjekt.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,OrderDate,Status,BuyerId")] Order order)
         {
+            ModelState.Remove("Buyer");
             if (ModelState.IsValid)
             {
                 _context.Add(order);
@@ -96,7 +97,7 @@ namespace KooliProjekt.Controllers
             {
                 return NotFound();
             }
-
+            ModelState.Remove("Buyer");
             if (ModelState.IsValid)
             {
                 try
