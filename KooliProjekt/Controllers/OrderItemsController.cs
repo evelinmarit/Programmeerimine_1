@@ -21,7 +21,8 @@ namespace KooliProjekt.Controllers
         // GET: OrderItems
         public async Task<IActionResult> Index()
         {
-            return View(await _context.OrderItems.ToListAsync());
+            var applicationDbContext = _context.OrderItems.Include(o => o.Order).Include(o => o.Product);
+            return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: OrderItems/Details/5
@@ -33,6 +34,8 @@ namespace KooliProjekt.Controllers
             }
 
             var orderItem = await _context.OrderItems
+                .Include(o => o.Order)
+                .Include(o => o.Product)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (orderItem == null)
             {
@@ -45,6 +48,8 @@ namespace KooliProjekt.Controllers
         // GET: OrderItems/Create
         public IActionResult Create()
         {
+            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id");
+            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name");
             return View();
         }
 
@@ -53,14 +58,18 @@ namespace KooliProjekt.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,PriceAtOrderTime,Quantity")] OrderItem orderItem)
+        public async Task<IActionResult> Create([Bind("Id,ProductId,PriceAtOrderTime,Quantity,OrderId")] OrderItem orderItem)
         {
+            ModelState.Remove("Order");
+            ModelState.Remove("Product");
             if (ModelState.IsValid)
             {
                 _context.Add(orderItem);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id", orderItem.OrderId);
+            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", orderItem.ProductId);
             return View(orderItem);
         }
 
@@ -77,6 +86,8 @@ namespace KooliProjekt.Controllers
             {
                 return NotFound();
             }
+            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id", orderItem.OrderId);
+            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", orderItem.ProductId);
             return View(orderItem);
         }
 
@@ -85,13 +96,14 @@ namespace KooliProjekt.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,PriceAtOrderTime,Quantity")] OrderItem orderItem)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ProductId,PriceAtOrderTime,Quantity,OrderId")] OrderItem orderItem)
         {
             if (id != orderItem.Id)
             {
                 return NotFound();
             }
-
+            ModelState.Remove("Order");
+            ModelState.Remove("Product");
             if (ModelState.IsValid)
             {
                 try
@@ -112,6 +124,8 @@ namespace KooliProjekt.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id", orderItem.OrderId);
+            ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", orderItem.ProductId);
             return View(orderItem);
         }
 
@@ -124,6 +138,8 @@ namespace KooliProjekt.Controllers
             }
 
             var orderItem = await _context.OrderItems
+                .Include(o => o.Order)
+                .Include(o => o.Product)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (orderItem == null)
             {

@@ -5,12 +5,11 @@ namespace KooliProjekt.Data
     public class Order
     {
         public int Id { get; set; }
-        
+
         [Required]
         public DateTime OrderDate { get; set; }
         [StringLength(50)]
         public string Status { get; set; }
-        [Required]
         public Buyer Buyer { get; set; }
         public int BuyerId { get; set; }
         [Required]
@@ -19,25 +18,26 @@ namespace KooliProjekt.Data
         {
             OrderItems = new List<OrderItem>();
         }
+        [Required]
         public decimal TotalAmount
         {
             get
             {
-                return OrderItems.Sum(item => item.PriceAtOrderTime * item.Quantity); // Kogusumma
+                return OrderItems.Sum(OrderItem => OrderItem.PriceAtOrderTime * OrderItem.Quantity); // Kogusumma
             }
         }
 
-        //public void MarkAsPaid()
-        //{
-        //    Status = "Paid";
-        //}
+        public void MarkAsPaid()
+        {
+            Status = "Paid";
+        }
 
-        //public void MarkAsDelivered()
-        //{
-        //    if (Status == "Paid")
-        //    {
-        //        Status = "Delivered";
-        //    }
-        //}
+        public void MarkAsDelivered()
+        {
+            if (Status == "Paid")
+            {
+                Status = "Delivered";
+            }
+        }
     }
 }

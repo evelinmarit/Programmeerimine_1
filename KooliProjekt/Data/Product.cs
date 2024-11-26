@@ -19,5 +19,6 @@ namespace KooliProjekt.Data
         public Category Category { get; set; }
         [DisplayName("Category")]
         public int CategoryId { get; set; }
+        public int Quantity { get; set; }
     }
 }
