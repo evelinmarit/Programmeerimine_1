@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using KooliProjekt.Data;
+using Microsoft.Win32;
 
 namespace KooliProjekt.Controllers
 {
@@ -60,8 +61,8 @@ namespace KooliProjekt.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,ProductId,PriceAtOrderTime,Quantity,OrderId")] OrderItem orderItem)
         {
-            ModelState.Remove("Order");
             ModelState.Remove("Product");
+            ModelState.Remove("Order");
             if (ModelState.IsValid)
             {
                 _context.Add(orderItem);
@@ -102,8 +103,8 @@ namespace KooliProjekt.Controllers
             {
                 return NotFound();
             }
-            ModelState.Remove("Order");
             ModelState.Remove("Product");
+            ModelState.Remove("Order");
             if (ModelState.IsValid)
             {
                 try
