@@ -6,22 +6,27 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using KooliProjekt.Data;
+using KooliProjekt.Services;
+using KooliProjekt.Data.Migrations;
 
 namespace KooliProjekt.Controllers
 {
     public class BuyersController : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public BuyersController(ApplicationDbContext context)
+        //private readonly ApplicationDbContext _context;
+        private readonly IBuyerService _buyerService;
+        public BuyersController(/*ApplicationDbContext context, */IBuyerService buyerService)
         {
-            _context = context;
+            //_context = context;
+            _buyerService = buyerService;
         }
 
         // GET: Buyers
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page)
         {
-            return View(await _context.Buyers.ToListAsync());
+            //return View(await _context.Buyers.ToListAsync());
+            var data = await _buyerService.List(page, 10);
+            return View(data);
         }
 
         // GET: Buyers/Details/5
@@ -31,9 +36,9 @@ namespace KooliProjekt.Controllers
             {
                 return NotFound();
             }
-
-            var buyer = await _context.Buyers
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var buyer = await _buyerService.Get(id.Value);
+            //var buyer = await _context.Buyers
+            //    .FirstOrDefaultAsync(m => m.Id == id);
             if (buyer == null)
             {
                 return NotFound();
@@ -57,8 +62,9 @@ namespace KooliProjekt.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(buyer);
-                await _context.SaveChangesAsync();
+                await _buyerService.Save(buyer);
+                //_context.Add(buyer);
+                //await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(buyer);
@@ -71,8 +77,8 @@ namespace KooliProjekt.Controllers
             {
                 return NotFound();
             }
-
-            var buyer = await _context.Buyers.FindAsync(id);
+            var buyer = await _buyerService.Get(id.Value);
+            //var buyer = await _context.Buyers.FindAsync(id);
             if (buyer == null)
             {
                 return NotFound();
@@ -94,22 +100,23 @@ namespace KooliProjekt.Controllers
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(buyer);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BuyerExists(buyer.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                //try
+                //{
+                //    _context.Update(buyer);
+                //    await _context.SaveChangesAsync();
+                //}
+                //catch (DbUpdateConcurrencyException)
+                //{
+                //    if (!BuyerExists(buyer.Id))
+                //    {
+                //        return NotFound();
+                //    }
+                //    else
+                //    {
+                //        throw;
+                //    }
+                //}
+                await _buyerService.Save(buyer);
                 return RedirectToAction(nameof(Index));
             }
             return View(buyer);
@@ -122,9 +129,9 @@ namespace KooliProjekt.Controllers
             {
                 return NotFound();
             }
-
-            var buyer = await _context.Buyers
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var buyer = await _buyerService.Get(id.Value);
+            //var buyer = await _context.Buyers
+            //    .FirstOrDefaultAsync(m => m.Id == id);
             if (buyer == null)
             {
                 return NotFound();
@@ -138,19 +145,20 @@ namespace KooliProjekt.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var buyer = await _context.Buyers.FindAsync(id);
-            if (buyer != null)
-            {
-                _context.Buyers.Remove(buyer);
-            }
+            //var buyer = await _context.Buyers.FindAsync(id);
+            //if (buyer != null)
+            //{
+            //    _context.Buyers.Remove(buyer);
+            //}
 
-            await _context.SaveChangesAsync();
+            //await _context.SaveChangesAsync();
+            await _buyerService.Delete(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool BuyerExists(int id)
-        {
-            return _context.Buyers.Any(e => e.Id == id);
-        }
+        //private bool BuyerExists(int id)
+        //{
+        //    return _context.Buyers.Any(e => e.Id == id);
+        //}
     }
 }
