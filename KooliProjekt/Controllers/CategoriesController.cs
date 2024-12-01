@@ -22,12 +22,8 @@ namespace KooliProjekt.Controllers
         }
 
         // GET: Categories
-        public async Task<IActionResult> Index(int page = 1)
+        public async Task<IActionResult> Index(int page)
         {
-            if (page < 1)
-            {
-                page = 1; // Väldi negatiivseid või nullväärtusi
-            }
             var data = await _categoryService.List(page, 10); 
             return View(data);
         }

@@ -6,23 +6,29 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using KooliProjekt.Data;
+using KooliProjekt.Services;
+using Microsoft.Identity.Client;
 
 namespace KooliProjekt.Controllers
 {
     public class ProductsController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        //private readonly ApplicationDbContext _context;
+        private readonly IProductService _productService;
 
-        public ProductsController(ApplicationDbContext context)
+        public ProductsController(/*ApplicationDbContext context,*/IProductService productService)
         {
-            _context = context;
+            //_context = context;
+            _productService = productService;
         }
 
         // GET: Products
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page)
         {
-            var applicationDbContext = _context.Products.Include(p => p.Category);
-            return View(await applicationDbContext.ToListAsync());
+            var data = await _productService.List(page, 10);
+            return View(data);
+            //var applicationDbContext = _context.Products.Include(p => p.Category);
+            //return View(await applicationDbContext.ToListAsync());
         }
 
         // GET: Products/Details/5
@@ -32,10 +38,10 @@ namespace KooliProjekt.Controllers
             {
                 return NotFound();
             }
-
-            var product = await _context.Products
-                .Include(p => p.Category)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var product = await _productService.Get(id.Value);
+            //var product = await _context.Products
+            //    .Include(p => p.Category)
+            //    .FirstOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {
                 return NotFound();
@@ -47,7 +53,9 @@ namespace KooliProjekt.Controllers
         // GET: Products/Create
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
+            var categories = _productService.ListCategories();
+            ViewData["CategoryId"] = categories;
+            //ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
             return View();
         }
 
@@ -62,11 +70,14 @@ namespace KooliProjekt.Controllers
             ModelState.Remove("Category");
             if (ModelState.IsValid)
             {
-                _context.Add(product);
-                await _context.SaveChangesAsync();
+                await _productService.Save(product);
+                //_context.Add(product);
+                //await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
+            var categories = await _productService.ListCategories();
+            ViewData["CategoryId"] = categories; // Kategooriate andmed ViewData-sse
+            //ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
             return View(product);
         }
 
@@ -77,14 +88,17 @@ namespace KooliProjekt.Controllers
             {
                 return NotFound();
             }
-
-            var product = await _context.Products.FindAsync(id);
+            var product = await _productService.Get(id.Value);
+            //var product = await _context.Products.FindAsync(id);
             if (product == null)
             {
                 return NotFound();
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
+            var categories = await _productService.ListCategories();
+            ViewData["CategoryId"] = categories; // Kategooriate andmed ViewData-sse
             return View(product);
+            //ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
+            //return View(product);
         }
 
         // POST: Products/Edit/5
@@ -101,25 +115,28 @@ namespace KooliProjekt.Controllers
             ModelState.Remove("Category");
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(product);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProductExists(product.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                //try
+                //{
+                //    _context.Update(product);
+                //    await _context.SaveChangesAsync();
+                //}
+                //catch (DbUpdateConcurrencyException)
+                //{
+                //    if (!ProductExists(product.Id))
+                //    {
+                //        return NotFound();
+                //    }
+                //    else
+                //    {
+                //        throw;
+                //    }
+                //}
+                await _productService.Save(product);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
+            var categories = await _productService.ListCategories();
+            ViewData["CategoryId"] = categories; // Kategooriate andmed ViewData-sse
+            //ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
             return View(product);
         }
 
@@ -130,10 +147,10 @@ namespace KooliProjekt.Controllers
             {
                 return NotFound();
             }
-
-            var product = await _context.Products
-                .Include(p => p.Category)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var product = await _productService.Get(id.Value);
+            //var product = await _context.Products
+                //.Include(p => p.Category)
+                //.FirstOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {
                 return NotFound();
@@ -147,19 +164,20 @@ namespace KooliProjekt.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var product = await _context.Products.FindAsync(id);
-            if (product != null)
-            {
-                _context.Products.Remove(product);
-            }
+            //var product = await _context.Products.FindAsync(id);
+            //if (product != null)
+            //{
+            //    _context.Products.Remove(product);
+            //}
 
-            await _context.SaveChangesAsync();
+            //await _context.SaveChangesAsync();
+            await _productService.Delete(id);
             return RedirectToAction(nameof(Index));
         }
 
-        private bool ProductExists(int id)
-        {
-            return _context.Products.Any(e => e.Id == id);
-        }
+        //private bool ProductExists(int id)
+        //{
+        //    return _context.Products.Any(e => e.Id == id);
+        //}
     }
 }
