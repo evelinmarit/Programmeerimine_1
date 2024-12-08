@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using KooliProjekt.Data;
 using Microsoft.Win32;
 using KooliProjekt.Services;
+using KooliProjekt.Models;
 
 namespace KooliProjekt.Controllers
 {
@@ -21,12 +22,13 @@ namespace KooliProjekt.Controllers
         }
 
         // GET: OrderItems
-        public async Task<IActionResult> Index(int page)
+        public async Task<IActionResult> Index(int page = 1, OrderItemIndexModel model = null)
         {
+            model = model ?? new OrderItemIndexModel();
             //var applicationDbContext = _context.OrderItems.Include(o => o.Order).Include(o => o.Product);
             //return View(await applicationDbContext.ToListAsync());
-            var data = await _orderItemService.List(page, 10);
-            return View(data);
+            model.Data = await _orderItemService.List(page, 10, model.Search);
+            return View(model);
         }
 
         // GET: OrderItems/Details/5

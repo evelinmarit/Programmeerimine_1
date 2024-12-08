@@ -1,4 +1,6 @@
-﻿@model IEnumerable<KooliProjekt.Data.OrderItem>
+﻿@* @model IEnumerable<KooliProjekt.Data.OrderItem> *@
+@model OrderItemIndexModel
+
 
 @{
     ViewData["Title"] = "Index";
@@ -9,26 +11,36 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+<form method="get">
+    <div class="form-group">
+        <label class="control-label">Order Search</label>
+        <input asp-for="Search.OrderSearch" class="form-control" />
+    </div>
+    <div class="form-group">
+        <button class="btn btn-primary">Search</button>
+        <a asp-controller="OrderItems" asp-action="Index" class="btn btn-primary">Reset</a>
+    </div>
+</form>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Product)
+                @Html.DisplayNameFor(model => model.Data.Results[0].Product)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PriceAtOrderTime)
+                @Html.DisplayNameFor(model => model.Data.Results[0].PriceAtOrderTime)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Quantity)
+                @Html.DisplayNameFor(model => model.Data.Results[0].Quantity)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Order)
+                @Html.DisplayNameFor(model => model.Data.Results[0].Order)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.Data) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Product.Name)
