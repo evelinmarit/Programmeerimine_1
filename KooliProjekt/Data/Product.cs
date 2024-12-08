@@ -20,5 +20,6 @@ namespace KooliProjekt.Data
         [DisplayName("Category")]
         public int CategoryId { get; set; }
         public int Quantity { get; set; }
+        public bool AtStock { get; set; }
     }
 }

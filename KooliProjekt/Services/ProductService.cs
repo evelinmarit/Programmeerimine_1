@@ -1,6 +1,7 @@
 ﻿using KooliProjekt.Data;
 using KooliProjekt.Data.Migrations;
 using Microsoft.EntityFrameworkCore;
+using KooliProjekt.Search;
 
 namespace KooliProjekt.Services
 {
@@ -12,11 +13,29 @@ namespace KooliProjekt.Services
         {
             _context = context;
         }
-        public async Task<PagedResult<Product>> List(int page, int pageSize)
+        public async Task<PagedResult<Product>> List(int page, int pageSize, ProductSearch search = null)
         {
-            var applicationDbContext = _context.Products.Include(p => p.Category);
-            //await applicationDbContext.ToListAsync();
-            return await _context.Products.GetPagedAsync(page, pageSize);
+            var query = _context.Products.AsQueryable();
+            if (search != null)
+            {
+                if (!string.IsNullOrWhiteSpace(search.Keyword))
+                {
+                    search.Keyword = search.Keyword.Trim();
+                    query = query.Where(product => 
+                        product.Name.Contains(search.Keyword));
+                }
+                if (search.AtStock.HasValue)
+                {
+                    query = query.Where(product => product.AtStock == search.AtStock.Value);
+                }
+            }
+            return await query
+                .OrderBy(product => product.Name)
+                .Include(product => product.Category)
+                .GetPagedAsync(page, pageSize);
+            //var applicationDbContext = _context.Products.Include(p => p.Category);
+            ////await applicationDbContext.ToListAsync();
+            //return await _context.Products.GetPagedAsync(page, pageSize);
         }
         public async Task<Product> Get(int id)
         {

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KooliProjekt.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241118214039_Products")]
+    [Migration("20241207133600_Products")]
     partial class Products
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace KooliProjekt.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.10")
+                .HasAnnotation("ProductVersion", "8.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -115,6 +115,9 @@ namespace KooliProjekt.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("PriceAtOrderTime")
                         .HasColumnType("decimal(18,2)");
 
@@ -125,6 +128,8 @@ namespace KooliProjekt.Data.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
 
                     b.HasIndex("ProductId");
 
@@ -139,6 +144,9 @@ namespace KooliProjekt.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("AtStock")
+                        .HasColumnType("bit");
+
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
@@ -151,9 +159,6 @@ namespace KooliProjekt.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<int?>("OrderId")
-                        .HasColumnType("int");
 
                     b.Property<string>("PhotoUrl")
                         .IsRequired()
@@ -169,8 +174,6 @@ namespace KooliProjekt.Data.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("OrderId");
 
                     b.ToTable("Products");
                 });
@@ -390,11 +393,19 @@ namespace KooliProjekt.Data.Migrations
 
             modelBuilder.Entity("KooliProjekt.Data.OrderItem", b =>
                 {
+                    b.HasOne("KooliProjekt.Data.Order", "Order")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("KooliProjekt.Data.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Order");
 
                     b.Navigation("Product");
                 });
@@ -402,14 +413,10 @@ namespace KooliProjekt.Data.Migrations
             modelBuilder.Entity("KooliProjekt.Data.Product", b =>
                 {
                     b.HasOne("KooliProjekt.Data.Category", "Category")
-                        .WithMany()
+                        .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("KooliProjekt.Data.Order", null)
-                        .WithMany("Products")
-                        .HasForeignKey("OrderId");
 
                     b.Navigation("Category");
                 });
@@ -470,9 +477,14 @@ namespace KooliProjekt.Data.Migrations
                     b.Navigation("Orders");
                 });
 
-            modelBuilder.Entity("KooliProjekt.Data.Order", b =>
+            modelBuilder.Entity("KooliProjekt.Data.Category", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("KooliProjekt.Data.Order", b =>
+                {
+                    b.Navigation("OrderItems");
                 });
 #pragma warning restore 612, 618
         }

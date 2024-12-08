@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using KooliProjekt.Data;
 using KooliProjekt.Services;
 using Microsoft.Identity.Client;
+using KooliProjekt.Search;
+using KooliProjekt.Models;
 
 namespace KooliProjekt.Controllers
 {
@@ -23,10 +25,12 @@ namespace KooliProjekt.Controllers
         }
 
         // GET: Products
-        public async Task<IActionResult> Index(int page)
+        public async Task<IActionResult> Index(int page = 1, ProductIndexModel model = null)
         {
-            var data = await _productService.List(page, 10);
-            return View(data);
+            model = model ?? new ProductIndexModel();
+            model.Data = await _productService.List(page, 10, model.Search);
+            //var data = await _productService.List(page, 10, search);
+            return View(model);
             //var applicationDbContext = _context.Products.Include(p => p.Category);
             //return View(await applicationDbContext.ToListAsync());
         }
@@ -54,7 +58,7 @@ namespace KooliProjekt.Controllers
         public IActionResult Create()
         {
             var categories = _productService.ListCategories();
-            ViewData["CategoryId"] = categories;
+            //ViewData["CategoryId"] = categories;
             //ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
             return View();
         }
@@ -65,7 +69,7 @@ namespace KooliProjekt.Controllers
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,PhotoUrl,Price,CategoryId")] Product product)
+        public async Task<IActionResult> Create([Bind("Id,Name,Description,PhotoUrl,Price,CategoryId,AtStock")] Product product)
         {
             ModelState.Remove("Category");
             if (ModelState.IsValid)
@@ -75,8 +79,8 @@ namespace KooliProjekt.Controllers
                 //await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            var categories = await _productService.ListCategories();
-            ViewData["CategoryId"] = categories; // Kategooriate andmed ViewData-sse
+            //var categories = await _productService.ListCategories();
+            //ViewData["CategoryId"] = categories; // Kategooriate andmed ViewData-sse
             //ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
             return View(product);
         }
@@ -94,8 +98,8 @@ namespace KooliProjekt.Controllers
             {
                 return NotFound();
             }
-            var categories = await _productService.ListCategories();
-            ViewData["CategoryId"] = categories; // Kategooriate andmed ViewData-sse
+            //var categories = await _productService.ListCategories();
+            //ViewData["CategoryId"] = categories; // Kategooriate andmed ViewData-sse
             return View(product);
             //ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
             //return View(product);
@@ -106,7 +110,7 @@ namespace KooliProjekt.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,PhotoUrl,Price,CategoryId")] Product product)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,PhotoUrl,Price,CategoryId,AtStock")] Product product)
         {
             if (id != product.Id)
             {
@@ -134,8 +138,8 @@ namespace KooliProjekt.Controllers
                 await _productService.Save(product);
                 return RedirectToAction(nameof(Index));
             }
-            var categories = await _productService.ListCategories();
-            ViewData["CategoryId"] = categories; // Kategooriate andmed ViewData-sse
+            //var categories = await _productService.ListCategories();
+            //ViewData["CategoryId"] = categories; // Kategooriate andmed ViewData-sse
             //ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product.CategoryId);
             return View(product);
         }

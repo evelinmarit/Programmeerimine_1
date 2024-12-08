@@ -38,6 +38,14 @@
                 <span asp-validation-for="CategoryId" class="text-danger"></span>
             </div>
             <div class="form-group">
+                <label asp-for="AtStock" class="control-label"></label>
+                <select asp-for="AtStock" class="form-control" name="AtStock">
+                    <option value="">-</option>
+                    <option value="True">Yes</option>
+                    <option value="False">No</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>

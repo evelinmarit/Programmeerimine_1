@@ -1,4 +1,5 @@
-﻿@model IEnumerable<KooliProjekt.Data.Product>
+﻿@* @model IEnumerable<KooliProjekt.Data.Product> *@
+@model ProductIndexModel
 
 @{
     ViewData["Title"] = "Index";
@@ -9,29 +10,50 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+<form method="get">
+    <div class="form-group">
+        <label class="control-label">Keyword</label>
+        <input asp-for="Search.Keyword" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label class="control-label">At Stock</label>
+        <select asp-for="Search.AtStock" class="form-control">
+            <option value="">-</option>
+            <option value="true">Yes</option>
+            <option value="false">No</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <button class="btn btn-primary">Search</button>
+        <a asp-controller="Products" asp-action="Index" class="btn btn-primary">Reset</a>
+    </div>
+</form>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Name)
+                @Html.DisplayNameFor(model => model.Data.Results[0].Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
+                @Html.DisplayNameFor(model => model.Data.Results[0].Description)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PhotoUrl)
+                @Html.DisplayNameFor(model => model.Data.Results[0].PhotoUrl)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Price)
+                @Html.DisplayNameFor(model => model.Data.Results[0].Price)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Category)
+                @Html.DisplayNameFor(model => model.Data.Results[0].Category)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Data.Results[0].AtStock)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
+@foreach (var item in Model.Data) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
@@ -48,6 +70,9 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Category.Name)
             </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AtStock)
+                </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                 <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
@@ -57,3 +82,5 @@
 }
     </tbody>
 </table>
+
+@* @(await Component.InvokeAsync<PagerViewComponent>(Model.Data)) *@

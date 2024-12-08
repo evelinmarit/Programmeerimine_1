@@ -53,6 +53,7 @@ namespace KooliProjekt.Data
             product1.Category = category1;
             product1.Price = 10;
             product1.Quantity = 105;
+            product1.AtStock = false;
             context.Products.Add(product1);
 
             var product2 = new Product();
@@ -62,6 +63,7 @@ namespace KooliProjekt.Data
             product2.Category = category2;
             product2.Price = 10;
             product2.Quantity = 13;
+            product2.AtStock = true;
             context.Products.Add(product2);
 
             var product3 = new Product();
@@ -71,6 +73,7 @@ namespace KooliProjekt.Data
             product3.Category = category1;
             product3.Price = 10;
             product3.Quantity = 20;
+            product3.AtStock = true;
             context.Products.Add(product3);
 
             var product4 = new Product();
@@ -80,6 +83,7 @@ namespace KooliProjekt.Data
             product4.Category = category1;
             product4.Price = 9;
             product4.Quantity = 23;
+            product4.AtStock = true;
             context.Products.Add(product4);
 
             var product5 = new Product();
@@ -89,6 +93,7 @@ namespace KooliProjekt.Data
             product5.Category = category5;
             product5.Price = 15;
             product5.Quantity = 56;
+            product5.AtStock = false;
             context.Products.Add(product5);
 
             var product6 = new Product();
@@ -98,6 +103,7 @@ namespace KooliProjekt.Data
             product6.Category = category7;
             product6.Price = 25;
             product6.Quantity = 15;
+            product6.AtStock = true;
             context.Products.Add(product6);
 
             var product7 = new Product();
@@ -107,6 +113,7 @@ namespace KooliProjekt.Data
             product7.Category = category8;
             product7.Price = 30;
             product7.Quantity = 4;
+            product7.AtStock = true;
             context.Products.Add(product7);
 
             var buyer1 = new Buyer();
