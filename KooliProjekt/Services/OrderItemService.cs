@@ -31,8 +31,6 @@ namespace KooliProjekt.Services
                 .Include(orderItem => orderItem.Product)
                 .Include(orderItem => orderItem.Order)
                 .GetPagedAsync(page, pageSize);
-            var applicationDbContext = _context.OrderItems.Include(oi => oi.Order).Include(oi => oi.Product);
-            return await _context.OrderItems.GetPagedAsync(page, pageSize);
         }
             public async Task<List<Order>> ListOrders()
             {

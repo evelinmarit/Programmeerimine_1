@@ -15,7 +15,6 @@ namespace KooliProjekt.Services
         public async Task<PagedResult<Buyer>> List(int page, int pageSize)
         {
             var applicationDbContext = _context.Buyers.Include(b => b.Orders);
-            //await applicationDbContext.ToListAsync();
             return await _context.Buyers.GetPagedAsync(page, pageSize);
         }
         public async Task<Buyer> Get(int id)

@@ -31,19 +31,7 @@ namespace KooliProjekt.Services
                     query = query.Where(order => order.Status == search.Status);
                 }
             }
-            //if (search.Status != null)
-            //{
-            //    if (search.Status.Value)
-            //    {
-            //        query = query.Where(list =>
-            //            list.Status.All(status => status.True));
-            //    }
-            //    else
-            //    {
-            //        query = query.Where(list =>
-            //           list.Status.All(status => !status.Status));
-            //    }
-            //}
+           
             return await query
                 .OrderBy(order => order.OrderDate)
                 .Include(o => o.Buyer)
@@ -55,7 +43,6 @@ namespace KooliProjekt.Services
         {
             return await _context.Orders
                 .Include(o => o.Buyer)
-                //.Include(o => o.OrderDate)
                 .Include(o => o.OrderItems)
                 .Where(o => o.Id == id)
                 .FirstOrDefaultAsync();
@@ -73,7 +60,6 @@ namespace KooliProjekt.Services
         {
             await _context.Orders
                 .Include(o => o.Buyer)
-                .Include(o => o.OrderDate)
                 .Include(o => o.OrderItems)
                 .Where(order => order.Id == 0)
                 .FirstOrDefaultAsync();

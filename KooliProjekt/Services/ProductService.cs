@@ -33,9 +33,7 @@ namespace KooliProjekt.Services
                 .OrderBy(product => product.Name)
                 .Include(product => product.Category)
                 .GetPagedAsync(page, pageSize);
-            //var applicationDbContext = _context.Products.Include(p => p.Category);
-            ////await applicationDbContext.ToListAsync();
-            //return await _context.Products.GetPagedAsync(page, pageSize);
+           
         }
         public async Task<Product> Get(int id)
         {

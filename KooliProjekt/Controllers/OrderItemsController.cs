@@ -9,6 +9,7 @@ using KooliProjekt.Data;
 using Microsoft.Win32;
 using KooliProjekt.Services;
 using KooliProjekt.Models;
+using KooliProjekt.Data.Migrations;
 
 namespace KooliProjekt.Controllers
 {
@@ -25,8 +26,6 @@ namespace KooliProjekt.Controllers
         public async Task<IActionResult> Index(int page = 1, OrderItemIndexModel model = null)
         {
             model = model ?? new OrderItemIndexModel();
-            //var applicationDbContext = _context.OrderItems.Include(o => o.Order).Include(o => o.Product);
-            //return View(await applicationDbContext.ToListAsync());
             model.Data = await _orderItemService.List(page, 10, model.Search);
             return View(model);
         }
@@ -39,10 +38,6 @@ namespace KooliProjekt.Controllers
                 return NotFound();
             }
             var orderItem = await _orderItemService.Get(id.Value);
-            //var orderItem = await _context.OrderItems
-            //    .Include(o => o.Order)
-            //    .Include(o => o.Product)
-            //    .FirstOrDefaultAsync(m => m.Id == id);
             if (orderItem == null)
             {
                 return NotFound();
@@ -54,8 +49,10 @@ namespace KooliProjekt.Controllers
         // GET: OrderItems/Create
         public IActionResult Create()
         {
-            //ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id");
-            //ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name");
+            var orders = _orderItemService.ListOrders().Result;
+            ViewBag.OrderId = new SelectList(orders, "Id", "Id");
+            var products = _orderItemService.ListProducts().Result;
+            ViewBag.ProductId = new SelectList(products, "Id", "Name");
             return View();
         }
 
@@ -71,16 +68,12 @@ namespace KooliProjekt.Controllers
             if (ModelState.IsValid)
             {
                 await _orderItemService.Save(orderItem);
-                //_context.Add(orderItem);
-                //await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            //var orders = await _orderItemService.ListOrders();
-            //ViewData["Orders"] = orders;
-            //var products = await _orderItemService.ListProducts();
-            //ViewData["Products"] = products;
-            //ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id", orderItem.OrderId);
-            //ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", orderItem.ProductId);
+            var orders = await _orderItemService.ListOrders();
+            ViewBag.OrderId = new SelectList(orders, "Id", "OrderId", orderItem.OrderId);
+            var products = await _orderItemService.ListProducts();
+            ViewBag.ProductId = new SelectList(products, "Id", "Name", orderItem.ProductId);
             return View(orderItem);
         }
 
@@ -92,13 +85,14 @@ namespace KooliProjekt.Controllers
                 return NotFound();
             }
             var orderItem = await _orderItemService.Get(id.Value);
-            //var orderItem = await _context.OrderItems.FindAsync(id);
             if (orderItem == null)
             {
                 return NotFound();
             }
-            //ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id", orderItem.OrderId);
-            //ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", orderItem.ProductId);
+            var orders = await _orderItemService.ListOrders();
+            ViewBag.OrderId = new SelectList(orders, "Id", "Id", orderItem.OrderId);
+            var products = await _orderItemService.ListProducts();
+            ViewBag.ProductId = new SelectList(products, "Id", "Name", orderItem.ProductId);
             return View(orderItem);
         }
 
@@ -117,27 +111,13 @@ namespace KooliProjekt.Controllers
             ModelState.Remove("Order");
             if (ModelState.IsValid)
             {
-                //try
-                //{
-                //    _context.Update(orderItem);
-                //    await _context.SaveChangesAsync();
-                //}
-                //catch (DbUpdateConcurrencyException)
-                //{
-                //    if (!OrderItemExists(orderItem.Id))
-                //    {
-                //        return NotFound();
-                //    }
-                //    else
-                //    {
-                //        throw;
-                //    }
-                //}
                 await _orderItemService.Save(orderItem);
                 return RedirectToAction(nameof(Index));
             }
-            //ViewData["OrderId"] = new SelectList(_context.Orders, "Id", "Id", orderItem.OrderId);
-            //ViewData["ProductId"] = new SelectList(_context.Products, "Id", "Name", orderItem.ProductId);
+            var orders = await _orderItemService.ListOrders();
+            ViewBag.OrderId = new SelectList(orders, "Id", "Id", orderItem.OrderId);
+            var products = await _orderItemService.ListProducts();
+            ViewBag.ProductId = new SelectList(products, "Id", "Name", orderItem.ProductId);
             return View(orderItem);
         }
 
@@ -149,10 +129,6 @@ namespace KooliProjekt.Controllers
                 return NotFound();
             }
             var orderItem = await _orderItemService.Get(id.Value);
-            //var orderItem = await _context.OrderItems
-            //    .Include(o => o.Order)
-            //    .Include(o => o.Product)
-            //    .FirstOrDefaultAsync(m => m.Id == id);
             if (orderItem == null)
             {
                 return NotFound();
@@ -166,20 +142,8 @@ namespace KooliProjekt.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            //var orderItem = await _context.OrderItems.FindAsync(id);
-            //if (orderItem != null)
-            //{
-            //    _context.OrderItems.Remove(orderItem);
-            //}
-
-            //await _context.SaveChangesAsync();
             await _orderItemService.Delete(id);
             return RedirectToAction(nameof(Index));
         }
-
-        //private bool OrderItemExists(int id)
-        //{
-        //    return _context.OrderItems.Any(e => e.Id == id);
-        //}
     }
 }
