@@ -25,8 +25,16 @@ namespace KooliProjekt.Services
             return await _context.Categories
                 .Include(category => category.Products)
                 .Where(category => category.Id == id)
-                .FirstOrDefaultAsync();        
+                .FirstOrDefaultAsync();
         }
+
+        //public async Task<Category> Get(int id)
+        //{
+        //    return await _context.Categories
+        //        .Include(category => category.Products.Where(p => !string.IsNullOrEmpty(p.Description) && !string.IsNullOrEmpty(p.PhotoUrl)))
+        //        .FirstOrDefaultAsync(category => category.Id == id);
+        //}
+
         public async Task Save(Category category)
         {
             if (category.Id == 0)
@@ -42,9 +50,18 @@ namespace KooliProjekt.Services
         }
         public async Task Delete(int id)
         {
-            await _context.Categories
-                .Where(category => category.Id == id)
-                .ExecuteDeleteAsync();
+            var category = await _context.Categories.FindAsync(id);
+            if (category == null)
+            {
+                return;
+            }
+
+            _context.Categories.Remove(category);
+            await _context.SaveChangesAsync();               
+
+            //await _context.Categories
+            //    .Where(category => category.Id == id)
+            //    .ExecuteDeleteAsync();
         }
     }
 }

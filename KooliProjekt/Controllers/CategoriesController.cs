@@ -59,7 +59,6 @@ namespace KooliProjekt.Controllers
             if (ModelState.IsValid)
             {
                 await _categoryService.Save(category);
-
                 return RedirectToAction(nameof(Index));
             }
             return View(category);
@@ -122,8 +121,7 @@ namespace KooliProjekt.Controllers
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-           
+        {           
             await _categoryService.Delete(id);
             return RedirectToAction(nameof(Index));
         }
