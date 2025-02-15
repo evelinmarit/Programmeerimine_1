@@ -67,7 +67,16 @@ namespace KooliProjekt.UnitTests.ControllerTests
             // Arrange
             int id = 1;
             var order = new Order { Id = id, Status = "Test" };
+            var mockOrderItems = new List<OrderItem> { new OrderItem { Id = 1 } };
+            var mockBuyers = new List<Buyer> { new Buyer { Id = 1 } };
 
+            _orderServiceMock
+                .Setup(x => x.ListOrderItems())
+                .ReturnsAsync(mockOrderItems);
+
+            _orderServiceMock
+                .Setup(x => x.ListBuyers())
+                .ReturnsAsync(mockBuyers);
             // Act
             _controller.ModelState.AddModelError("error", "error");
             var result = await _controller.Create(order) as ViewResult;
@@ -121,6 +130,16 @@ namespace KooliProjekt.UnitTests.ControllerTests
             // Arrange
             int id = 1;
             var order = new Order { Id = id, Status = "Test" };
+            var mockOrderItems = new List<OrderItem> { new OrderItem { Id = 1 } };
+            var mockBuyers = new List<Buyer> { new Buyer { Id = 1 } };
+
+            _orderServiceMock
+                .Setup(x => x.ListOrderItems())
+                .ReturnsAsync(mockOrderItems);
+
+            _orderServiceMock
+                .Setup(x => x.ListBuyers())
+                .ReturnsAsync(mockBuyers);
 
             // Act
             _controller.ModelState.AddModelError("error", "error");

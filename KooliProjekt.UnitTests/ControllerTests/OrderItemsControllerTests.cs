@@ -49,6 +49,10 @@ namespace KooliProjekt.UnitTests.ControllerTests
             // Arrange
             int id = 1;
             var orderItem = new OrderItem { Id = id, ProductId = 1, OrderId = 1 };
+
+            var mockOrders = new List<Order> { new Order { Id = 1 } };
+            var mockProducts = new List<Product> { new Product { Id = 1, Name = "Test Product" } };
+
             _orderItemServiceMock
                 .Setup(x => x.Save(orderItem))
                 .Returns(Task.CompletedTask)
@@ -70,18 +74,28 @@ namespace KooliProjekt.UnitTests.ControllerTests
             int id = 1;
             var orderItem = new OrderItem { Id = id, ProductId = 1, PriceAtOrderTime = 5, Quantity = 1, OrderId = 1 };
 
+            var mockOrders = new List<Order> { new Order { Id = 1 } };
+            var mockProducts = new List<Product> { new Product { Id = 1, Name = "Test Product" } };
+
+            _orderItemServiceMock
+                .Setup(x => x.ListOrders())
+                .ReturnsAsync(mockOrders);
+
+            _orderItemServiceMock
+                .Setup(x => x.ListProducts())
+                .ReturnsAsync(mockProducts);
+
             // Act
-            _controller.ModelState.AddModelError("error", "error");
+            _controller.ModelState.AddModelError("error", "error"); // Lisame vigase ModelState
             var result = await _controller.Create(orderItem) as ViewResult;
 
             // Assert
             Assert.NotNull(result);
-            Assert.True(
-                string.IsNullOrEmpty(result.ViewName) ||
-                result.ViewName == "Create"
-            );
+            Assert.True(string.IsNullOrEmpty(result.ViewName) || result.ViewName == "Create");
+            Assert.NotNull(result.Model);
             Assert.Equal(orderItem, result.Model);
         }
+
 
         [Fact]
         public async Task Edit_should_return_notfound_when_id_is_missing()
@@ -123,6 +137,17 @@ namespace KooliProjekt.UnitTests.ControllerTests
             // Arrange
             int id = 1;
             var orderItem = new OrderItem { Id = id, ProductId = 1, OrderId = 2 };
+
+            var mockOrders = new List<Order> { new Order { Id = 1 } };
+            var mockProducts = new List<Product> { new Product { Id = 1, Name = "Test Product" } };
+
+            _orderItemServiceMock
+                .Setup(x => x.ListOrders())
+                .ReturnsAsync(mockOrders);
+
+            _orderItemServiceMock
+                .Setup(x => x.ListProducts())
+                .ReturnsAsync(mockProducts);
 
             // Act
             _controller.ModelState.AddModelError("error", "error");

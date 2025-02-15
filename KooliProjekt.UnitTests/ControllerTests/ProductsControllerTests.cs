@@ -1,6 +1,5 @@
 ﻿using KooliProjekt.Controllers;
 using KooliProjekt.Data;
-using KooliProjekt.Data.Migrations;
 using KooliProjekt.Services;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -82,7 +81,12 @@ namespace KooliProjekt.UnitTests.ControllerTests
         {
             // Arrange
             int id = 1;
-            var product = new Product { Id = id, Name = "Test", Description = "Great", PhotoUrl = "http://www.foto", Price = 7, CategoryId = 1, AtStock = false };
+            var product = new Product { Id = id, Name = "Test", Description = "Great", PhotoUrl = "http://www.foto", CategoryId = 1, Price = 7, AtStock = false };
+            var mockCategories = new List<Category> { new Category { Id = 1, Name = "Test1" } };
+
+            _productServiceMock
+                .Setup(x => x.ListCategories())
+                .ReturnsAsync(mockCategories);
 
             // Act
             _controller.ModelState.AddModelError("error", "error");
@@ -94,6 +98,7 @@ namespace KooliProjekt.UnitTests.ControllerTests
                 string.IsNullOrEmpty(result.ViewName) ||
                 result.ViewName == "Create"
             );
+            Assert.NotNull(result.Model);
             Assert.Equal(product, result.Model);
         }
 
@@ -174,7 +179,12 @@ namespace KooliProjekt.UnitTests.ControllerTests
             // Arrange
             int id = 1;
             var product = new Product { Id = id, Name = "Test" };
+            var mockCategories = new List<Category> { new Category { Id = 1, Name = "Test1" } };
 
+            _productServiceMock
+                .Setup(x => x.ListCategories())
+                .ReturnsAsync(mockCategories);
+            
             // Act
             _controller.ModelState.AddModelError("error", "error");
             var result = await _controller.Edit(id, product) as ViewResult;
