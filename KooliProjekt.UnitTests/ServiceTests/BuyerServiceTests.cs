@@ -54,8 +54,8 @@ namespace KooliProjekt.UnitTests.ServiceTests
                 ShippingAddress = "Test 1",
                 Orders = new List<Order>
         {
-            new Order { Status = "Test" },
-            new Order { Status = "Test" }
+            new Order { OrderDate = DateTime.UtcNow, Status = "Shipped" },
+            new Order { OrderDate = DateTime.UtcNow, Status = "Pending" }
         }
             };
 
@@ -69,9 +69,11 @@ namespace KooliProjekt.UnitTests.ServiceTests
             Assert.NotNull(result);
             Assert.Equal(buyer.Name, result.Name);
             Assert.Equal(2, result.Orders.Count);
-            Assert.Contains(result.Orders, o => o.BuyerId == 0);
-            Assert.Contains(result.Orders, o => o.BuyerId == 1);
+
+            // Kontrollime, et kõik tellimused on seotud õige BuyerId-ga
+            Assert.All(result.Orders, o => Assert.Equal(buyer.Id, o.BuyerId));
         }
+
 
         [Fact]
         public async Task Save_ShouldAddNewBuyer()
