@@ -76,9 +76,15 @@ namespace KooliProjekt.Services
 
         public async Task Delete(int id)
         {
-            await _context.Orders
-                .Where(order => order.Id == id)
-                .ExecuteDeleteAsync();
+            var order = await _context.Orders.FirstOrDefaultAsync(o => o.Id == id);
+            if (order != null)
+            {
+                _context.Orders.Remove(order);
+                await _context.SaveChangesAsync();
+            }
+            //await _context.Orders
+            //    .Where(order => order.Id == id)
+            //    .ExecuteDeleteAsync();
         }
     }
 }
